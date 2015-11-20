@@ -1,10 +1,13 @@
 // forked from alvarobyrne's "exploring-canvas-drawing-techniques" http://jsdo.it/alvarobyrne/exploring-canvas-drawing-techniques
 var elG = document.getElementById('c');
-
+var collabButton = document.getElementById('collaborate');
+var buttonOffsetX = collabButton.offsetWidth;
+var buttonOffsetY = 0;
 
 // This makes the canvas's coordinate system the same as the actual pixels - Jess
-elG.width = elG.offsetWidth;
-elG.height = elG.offsetHeight;
+elG.width = elG.offsetWidth - buttonOffsetX;
+elG.height = elG.offsetHeight - buttonOffsetY;
+console.log("offset width",elG.offsetWidth);
 console.log("offset height",elG.offsetHeight);
 
 
@@ -39,7 +42,7 @@ setTimeout(function(){
 //doSetNeighborNearby(elG);
 //doSetNeighborFur(elG);
 
-// var gui = new dat.GUI();
+var gui = new dat.GUI();
 // gui.add(this,'doClearCanvas');
 
 var folder_basics = gui.addFolder('basics');
@@ -310,14 +313,14 @@ function modeSimplePencil (el) {
 	var isDrawing;
 
 
-
+////////  Attempt to add touch events ///////////
 	var touchDown = function(e) {
 	  e.preventDefault();
 	  isDrawing = true;
 	  ctx.beginPath();
 	  console.log(e);
 	  console.log(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
-	  ctx.moveTo(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+	  ctx.moveTo(e.targetTouches[0].clientX - buttonOffsetX, e.targetTouches[0].clientY - buttonOffsetY);
 	};
 	var touchXY = function(e) {
 	  e.preventDefault();
@@ -333,7 +336,7 @@ function modeSimplePencil (el) {
 	el.addEventListener("touchstart", touchDown, false);
     el.addEventListener("touchmove", touchXY, true);
     el.addEventListener("touchend", touchUp, false);
-
+//////////////////////////////////////////////////////
 	
 
 
@@ -346,12 +349,12 @@ function modeSimplePencil (el) {
 	  isDrawing = true;
 	  ctx.beginPath();
 	  console.log(e.clientX, e.clientY);
-	  ctx.moveTo(e.clientX, e.clientY);
+	  ctx.moveTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	};
 	el.onmousemove = function(e) {
 	  if (isDrawing) {
 	  	
-	    ctx.lineTo(e.clientX, e.clientY);
+	    ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	    ctx.stroke();
 	  }
 	};
