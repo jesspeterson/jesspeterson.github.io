@@ -1,10 +1,13 @@
 // forked from alvarobyrne's "exploring-canvas-drawing-techniques" http://jsdo.it/alvarobyrne/exploring-canvas-drawing-techniques
 var elG = document.getElementById('c');
 
+
 // This makes the canvas's coordinate system the same as the actual pixels - Jess
 elG.width = elG.offsetWidth;
 elG.height = elG.offsetHeight;
-console.log("offset height",elG.offsetHeight)
+console.log("offset height",elG.offsetHeight);
+
+
 
 
 var ctx = elG.getContext('2d');
@@ -305,6 +308,40 @@ function modeSimplePencil (el) {
 	var ctx = el.getContext('2d');
 	console.log("offset width", el.height);
 	var isDrawing;
+
+
+
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  isDrawing = true;
+	  ctx.beginPath();
+	  console.log(e);
+	  console.log(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+	  ctx.moveTo(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  if (isDrawing) {
+	    ctx.lineTo(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+	    ctx.stroke();
+	  }
+	};
+	var touchUp = function() {
+	  isDrawing = false;
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+
+	
+
+
+
+
+
+
+
 	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  ctx.beginPath();
