@@ -1,12 +1,33 @@
 // forked from alvarobyrne's "exploring-canvas-drawing-techniques" http://jsdo.it/alvarobyrne/exploring-canvas-drawing-techniques
 var elG = document.getElementById('c');
-var collabButton = document.getElementById('collaborate');
-var buttonOffsetX = collabButton.offsetWidth;
-var buttonOffsetY = 0;
 
-// This makes the canvas's coordinate system the same as the actual pixels - Jess
+
+// This makes the canvas's coordinate system the same as the actual pixels.  
+//Note the offsets, which determine the position on the canvas given the size 
+//of the collaborate button. - Jess
+var collabButton = document.getElementById('collaborate');
+var buttonOffsetX = 0;
+buttonOffsetX = collabButton.offsetWidth;
+var buttonOffsetY = 0;
 elG.width = elG.offsetWidth - buttonOffsetX;
 elG.height = elG.offsetHeight - buttonOffsetY;
+
+
+// Initialize other canvases
+var canvas1 = document.getElementById('c-0'); // Necessary if we want all the coordinates of the canvases to match
+canvas1.width = elG.width;
+canvas1.height = elG.height;
+var canvas2 = document.getElementById('c-1'); // Necessary if we want all the coordinates of the canvases to match
+canvas2.width = elG.width;
+canvas2.height = elG.height;
+var canvas3 = document.getElementById('c-2'); // Necessary if we want all the coordinates of the canvases to match
+canvas3.width = elG.width;
+canvas3.height = elG.height;
+var canvas4 = document.getElementById('c-3'); // Necessary if we want all the coordinates of the canvases to match
+canvas4.width = elG.width;
+canvas4.height = elG.height;
+
+
 console.log("offset width",elG.offsetWidth);
 console.log("offset height",elG.offsetHeight);
 
@@ -70,7 +91,6 @@ function doSetSmoothConnection (argument) {
 	traceBrushName("Smooth Connection");
 	doclearCanvasProperties();
 	modeSmoothConnection(elG);
-	
 }
 folder_basics.add(this,'doSetEdgeSmoothShadow');
 function doSetEdgeSmoothShadow (argument) {
@@ -307,30 +327,44 @@ global_styles.get_line_width=function  (argument) {
 }
 var lw = global_styles.get_line_width();
 console.log("lw : ",lw);
+
+
+
+// This function is modified from the original version to do two things
+// 1. It has touch events
+// 2. It sends the appropriate together.js message if together.js is enabled
 function modeSimplePencil (el) {
 	var ctx = el.getContext('2d');
-	console.log("offset width", el.height);
 	var isDrawing;
 
 
-////////  Attempt to add touch events ///////////
+////////  Adds touch events ///////////
 	var touchDown = function(e) {
 	  e.preventDefault();
 	  isDrawing = true;
 	  ctx.beginPath();
 	  console.log(e);
-	  console.log(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
-	  ctx.moveTo(e.targetTouches[0].clientX - buttonOffsetX, e.targetTouches[0].clientY - buttonOffsetY);
+	  ctx.moveTo(e.targetTouches[0].clientX - buttonOffsetX, e.targetTouches[0].clientY - buttonOffsetY); // Note the offsets.  This is necessary because of the positioning of the togetherJS button - Jess
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "SimplePencil", e: 'mouseDown', clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY});
+      }
 	};
 	var touchXY = function(e) {
 	  e.preventDefault();
 	  if (isDrawing) {
 	    ctx.lineTo(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
 	    ctx.stroke();
+	    if (TogetherJS.running) {
+        	TogetherJS.send({type: "SimplePencil", e: 'mouseMove', clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY});
+      	}
 	  }
+
 	};
 	var touchUp = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SimplePencil", e: "mouseUp"});
+      }
 	};
 
 	el.addEventListener("touchstart", touchDown, false);
@@ -340,28 +374,34 @@ function modeSimplePencil (el) {
 	
 
 
-
-
-
-
-
 	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  ctx.beginPath();
 	  console.log(e.clientX, e.clientY);
 	  ctx.moveTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "SimplePencil", e: "mouseDown", clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 	el.onmousemove = function(e) {
 	  if (isDrawing) {
 	  	
 	    ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	    ctx.stroke();
+	    if (TogetherJS.running) {
+        	TogetherJS.send({type: "SimplePencil", e: "mouseMove", clientX: e.clientX, clientY: e.clientY});
+      	}
 	  }
 	};
 	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SimplePencil", e: "mouseUp"});
+      }
 	};
 }
+
+
 function modeEdgeSmoothShadow (el) {
 	console.log('edge');
 // var el = document.getElementById('c');
