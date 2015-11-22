@@ -54,7 +54,7 @@ canvas {
 }
 
 
-video#bgvid { 
+video { 
     position: fixed;
     top: 50%;
     left: 50%;
@@ -72,13 +72,13 @@ video#bgvid {
 }
 
 @media (max-width: 1024px) {
-.ec {
+.ed {
     background-image:url(Tropicult_Takeover_web_02.gif);
     background-size:cover;
     background-repeat:no-repeat;
     overflow:hidden;
 }
-.ec video  {
+.ec  {
     display: none;
   }
 }
