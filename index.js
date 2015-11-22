@@ -338,39 +338,41 @@ function modeSimplePencil (el) {
 	var isDrawing;
 
 
-////////  Adds touch events ///////////
-	var touchDown = function(e) {
-	  e.preventDefault();
-	  isDrawing = true;
-	  ctx.beginPath();
-	  console.log(e);
-	  ctx.moveTo(e.targetTouches[0].clientX - buttonOffsetX, e.targetTouches[0].clientY - buttonOffsetY); // Note the offsets.  This is necessary because of the positioning of the togetherJS button - Jess
-	  if (TogetherJS.running) {
-        TogetherJS.send({type: "SimplePencil", e: 'mouseDown', clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY});
-      }
-	};
-	var touchXY = function(e) {
-	  e.preventDefault();
-	  if (isDrawing) {
-	    ctx.lineTo(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
-	    ctx.stroke();
-	    if (TogetherJS.running) {
-        	TogetherJS.send({type: "SimplePencil", e: 'mouseMove', clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY});
-      	}
-	  }
+// ////////  Adds touch events ///////////
+// 	var touchDown = function(e) {
+// 	  e.preventDefault();
+// 	  isDrawing = true;
+// 	  ctx.beginPath();
+// 	  console.log(e);
+// 	  ctx.moveTo(e.targetTouches[0].clientX - buttonOffsetX, e.targetTouches[0].clientY - buttonOffsetY); // Note the offsets.  This is necessary because of the positioning of the togetherJS button - Jess
+// 	  if (TogetherJS.running) {
+//         TogetherJS.send({type: "SimplePencil", e: 'mouseDown', clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY});
+//       }
+// 	};
+// 	var touchXY = function(e) {
+// 	  e.preventDefault();
+// 	  if (isDrawing) {
+// 	    ctx.lineTo(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+// 	    ctx.stroke();
+// 	    if (TogetherJS.running) {
+//         	TogetherJS.send({type: "SimplePencil", e: 'mouseMove', clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY});
+//       	}
+// 	  }
 
-	};
-	var touchUp = function() {
-	  isDrawing = false;
-	  if (TogetherJS.running) {
-        	TogetherJS.send({type: "SimplePencil", e: "mouseUp"});
-      }
-	};
+// 	};
+// 	var touchUp = function() {
+// 	  isDrawing = false;
+// 	  if (TogetherJS.running) {
+//         	TogetherJS.send({type: "SimplePencil", e: "mouseUp"});
+//       }
+// 	};
 
-	el.addEventListener("touchstart", touchDown, false);
-    el.addEventListener("touchmove", touchXY, true);
-    el.addEventListener("touchend", touchUp, false);
-//////////////////////////////////////////////////////
+// 	el.addEventListener("touchstart", touchDown, false);
+//     el.addEventListener("touchmove", touchXY, true);
+//     el.addEventListener("touchend", touchUp, false);
+// //////////////////////////////////////////////////////
+
+
 	
 
 
@@ -399,6 +401,27 @@ function modeSimplePencil (el) {
         	TogetherJS.send({type: "SimplePencil", e: "mouseUp"});
       }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
 
 
@@ -415,58 +438,129 @@ function modeEdgeSmoothShadow (el) {
 	  ctx.lineJoin = ctx.lineCap = 'round';
 	  ctx.shadowBlur = 1;
 	  ctx.shadowColor = ctx.strokeStyle;
-	  ctx.moveTo(e.clientX, e.clientY);
+	  ctx.moveTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothShadow", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 	el.onmousemove = function(e) {
 	  if (isDrawing) {
-	    ctx.lineTo(e.clientX, e.clientY);
+	    ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	    ctx.stroke();
 	  }
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "EdgeSmoothShadow", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "EdgeSmoothShadow", e: "mouseUp"});
+      }
 	};
-  // body...
+  
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSmoothConnection (elArg) {
-	var ctx = elArg.getContext('2d');
+
+
+function modeSmoothConnection (el) {
+	var ctx = el.getContext('2d');
 	var isDrawing;
 
-	elArg.onmousedown = function(e) {
-	  ctx.beginPath();
+
+	el.onmousedown = function(e) {
 	  isDrawing = true;
+	  ctx.beginPath();
 	  ctx.lineWidth = 10;
 	  ctx.lineJoin = ctx.lineCap = 'round';
-	  ctx.moveTo(e.clientX, e.clientY);
+	  ctx.moveTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "modeSmoothConnection", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (isDrawing) {
-	    ctx.lineTo(e.clientX, e.clientY);
+	    ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	    ctx.stroke();
 	  }
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "modeSmoothConnection", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "modeSmoothConnection", e: "mouseUp"});
+      }
 	};
+
+
+
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
+
 }
-function modePointBased (elArg) {
-	var ctx = elArg.getContext('2d');
+
+
+function modePointBased (el) {
+	var ctx = el.getContext('2d');
 
 	// ctx.lineWidth = 10;
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "PointBased", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.beginPath();
 	  ctx.moveTo(points[0].x, points[0].y);
@@ -474,15 +568,46 @@ function modePointBased (elArg) {
 	    ctx.lineTo(points[i].x, points[i].y);
 	  }
 	  ctx.stroke();
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "PointBased", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
-	};	// body...
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "PointBased", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
+	};
+
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
+
+
+
 }
-function modePointBasedShadow (elArg) {
-	var ctx = elArg.getContext('2d');
+function modePointBasedShadow (el) {
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 10;
 	ctx.lineJoin = ctx.lineCap = 'round';
@@ -491,16 +616,19 @@ function modePointBasedShadow (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "PointBasedShadow", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.beginPath();
 	  ctx.moveTo(points[0].x, points[0].y);
@@ -508,28 +636,61 @@ function modePointBasedShadow (elArg) {
 	    ctx.lineTo(points[i].x, points[i].y);
 	  }
 	  ctx.stroke();
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "PointBasedShadow", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "PointBasedShadow", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
+
+
 }
-function modeEdgeSmoothing (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeEdgeSmoothing (el) {
+	var ctx = el.getContext('2d');
 	var isDrawing;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  ctx.moveTo(e.clientX, e.clientY);
+	  ctx.moveTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothing", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (isDrawing) {
 	  	var lineWidth = 7*ctx.lineWidth;
 	  	var lineWidth2 = 2*lineWidth;
 	  	var lineWidth4 = 2*lineWidth2;
 	  	console.log("lineWidth : ",lineWidth);
-	    var radgrad = ctx.createRadialGradient(e.clientX,e.clientY,lineWidth,e.clientX,e.clientY,lineWidth2);
+	    var radgrad = ctx.createRadialGradient(e.clientX - buttonOffsetY,e.clientY - buttonOffsetY,lineWidth,e.clientX - buttonOffsetX,e.clientY - buttonOffsetY,lineWidth2);
 	    var color_alpha = chroma(ctx.strokeStyle).alpha(0.5).css();
 	    var color_alpha2 = chroma(ctx.strokeStyle).alpha(0).css();
 	    radgrad.addColorStop(0 	, ctx.strokeStyle);
@@ -537,21 +698,48 @@ function modeEdgeSmoothing (elArg) {
 	    radgrad.addColorStop(1 	, color_alpha2);
 	    ctx.fillStyle = radgrad;
 	    
-	    ctx.fillRect(e.clientX - lineWidth2, e.clientY - lineWidth2, lineWidth4, lineWidth4);
+	    ctx.fillRect(e.clientX - buttonOffsetX - lineWidth2, e.clientY - buttonOffsetY - lineWidth2, lineWidth4, lineWidth4);
 	  }
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothing", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothing", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeEdgeSmoothingEnhanced (elArg) {
+function modeEdgeSmoothingEnhanced (el) {
 	function distanceBetween(point1, point2) {
 	  return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
 	}
 	function angleBetween(point1, point2) {
 	  return Math.atan2( point2.x - point1.x, point2.y - point1.y );
 	}
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var lineWidth = 4*ctx.lineWidth;
@@ -561,15 +749,18 @@ function modeEdgeSmoothingEnhanced (elArg) {
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothingEnhanced", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  var currentPoint = { x: e.clientX, y: e.clientY };
+	  var currentPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
 	  var dist = distanceBetween(lastPoint, currentPoint);
 	  var angle = angleBetween(lastPoint, currentPoint);
 	  
@@ -591,13 +782,40 @@ function modeEdgeSmoothingEnhanced (elArg) {
 	  }
 	  
 	  lastPoint = currentPoint;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothingEnhanced", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "EdgeSmoothingEnhanced", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeBezierCurves (elArg) {
+function modeBezierCurves (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) *0.5,
@@ -605,23 +823,26 @@ function modeBezierCurves (elArg) {
 	  };
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  points.length=0;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "BezierCurves", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
 
 	  // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
@@ -644,14 +865,42 @@ function modeBezierCurves (elArg) {
 	  // the bezier control point
 	  ctx.lineTo(p1.x, p1.y);
 	  ctx.stroke();
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "BezierCurves", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "BezierCurves", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeInclined (elArg) {
+function modeInclined (el) {
 	// based on http://www.tricedesigns.com/2012/01/04/sketching-with-html5-canvas-and-brush-images/
 
 	var img = new Image();
@@ -665,20 +914,23 @@ function modeInclined (elArg) {
 	  return Math.atan2( point2.x - point1.x, point2.y - point1.y );
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "Inclined", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  var currentPoint = { x: e.clientX, y: e.clientY };
+	  var currentPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
 	  var dist = distanceBetween(lastPoint, currentPoint);
 	  var angle = angleBetween(lastPoint, currentPoint);
 	  
@@ -689,13 +941,40 @@ function modeInclined (elArg) {
 	  }
 	  
 	  lastPoint = currentPoint;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "Inclined", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "Inclined", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeRotatinStrokes (elArg) {
+function modeRotatinStrokes (el) {
 	// based on http://www.tricedesigns.com/2012/01/04/sketching-with-html5-canvas-and-brush-images/
 
 	var img = new Image();
@@ -714,20 +993,23 @@ function modeRotatinStrokes (elArg) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "RotatinStrokes", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  var currentPoint = { x: e.clientX, y: e.clientY };
+	  var currentPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
 	  var dist = distanceBetween(lastPoint, currentPoint);
 	  var angle = angleBetween(lastPoint, currentPoint);
 	  
@@ -743,17 +1025,45 @@ function modeRotatinStrokes (elArg) {
 	  }
 	  
 	  lastPoint = currentPoint;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "RotatinStrokes", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "RotatinStrokes", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeVariableSegment (elArg) {
+function modeVariableSegment (el) {
 	function getRandomInt(min, max) {
 	  return 0|(Math.random() * (max - min + 1)) + min;
 	}
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineJoin = ctx.lineCap = 'round';
 	/*ctx.shadowBlur = 10;
@@ -761,23 +1071,26 @@ function modeVariableSegment (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  points.push({ 
-	    x: e.clientX, 
-	    y: e.clientY,
+	    x: e.clientX - buttonOffsetX, 
+	    y: e.clientY - buttonOffsetY,
 	    width: getRandomInt(3, 5)
 	  });
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "VariableSegment", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  //ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
 	  points.push({ 
-	    x: e.clientX, 
-	    y: e.clientY,
+	    x: e.clientX - buttonOffsetX, 
+	    y: e.clientY - buttonOffsetY,
 	    width: getRandomInt(3, 5)
 	  });
 
@@ -788,19 +1101,46 @@ function modeVariableSegment (elArg) {
 	    ctx.lineTo(points[i].x, points[i].y);
 	    ctx.stroke();
 	  }
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "VariableSegment", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "VariableSegment", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeMultipleStrokes (elArg) {
+function modeMultipleStrokes (el) {
 	function getRandomInt(min, max) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineWidth = 1;
@@ -809,49 +1149,80 @@ function modeMultipleStrokes (elArg) {
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+	  if (TogetherJS.running) {
+        TogetherJS.send({type: "MultipleStrokes", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 		if (!isDrawing) return;
 
 		ctx.beginPath();
 
 		ctx.strokeStyle = 'gray';
 		ctx.moveTo(lastPoint.x - getRandomInt(0, 2), lastPoint.y - getRandomInt(0, 2));
-		ctx.lineTo(e.clientX - getRandomInt(0, 2), e.clientY - getRandomInt(0, 2));
+		ctx.lineTo(e.clientX - buttonOffsetX - getRandomInt(0, 2), e.clientY - buttonOffsetY - getRandomInt(0, 2));
 		ctx.stroke();
 
 
 		ctx.strokeStyle = 'white';
 	ctx.lineWidth = 1;
 		ctx.moveTo(lastPoint.x, lastPoint.y);
-		ctx.lineTo(e.clientX, e.clientY);
+		ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 		ctx.stroke();
 		var max = 2;
 		var max2 = max*0.5;
 	ctx.lineWidth = 1;
 		ctx.strokeStyle = 'gray';
 		ctx.moveTo(lastPoint.x + getRandomInt(0,2), lastPoint.y + getRandomInt(0,2));
-		ctx.lineTo(e.clientX + getRandomInt(0,2), e.clientY + getRandomInt(0,2));
+		ctx.lineTo(e.clientX - buttonOffsetX + getRandomInt(0,2), e.clientY - buttonOffsetY + getRandomInt(0,2));
 		ctx.stroke();
 
-		lastPoint = { x: e.clientX, y: e.clientY };
+		lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+		if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleStrokes", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      	}
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 		ctx.strokeStyle = 'white';
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleStrokes", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
+
 }
-function modeMultipleStrokes2 (elArg) {
+function modeMultipleStrokes2 (el) {
 	function getRandomInt(min, max) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineWidth = 1;
@@ -860,45 +1231,77 @@ function modeMultipleStrokes2 (elArg) {
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleStrokes2", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 		if (!isDrawing) return;
 
 		ctx.beginPath();
 
 		ctx.strokeStyle = 'gray';
 		ctx.moveTo(lastPoint.x - getRandomInt(0, 2), lastPoint.y - getRandomInt(0, 2));
-		ctx.lineTo(e.clientX - getRandomInt(0, 2), e.clientY - getRandomInt(0, 2));
+		ctx.lineTo(e.clientX - buttonOffsetX - getRandomInt(0, 2), e.clientY - buttonOffsetY - getRandomInt(0, 2));
 		ctx.stroke();
 
 
 		ctx.strokeStyle = 'white';
 	ctx.lineWidth = 1;
 		ctx.moveTo(lastPoint.x, lastPoint.y);
-		ctx.lineTo(e.clientX, e.clientY);
+		ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 		ctx.stroke();
 		var max = 2;
 		var max2 = max*0.5;
 	ctx.lineWidth = 1;
 		ctx.strokeStyle = 'gray';
 		ctx.moveTo(lastPoint.x + getRandomInt(-max2, max2), lastPoint.y + getRandomInt(-max2, max2));
-		ctx.lineTo(e.clientX + getRandomInt(-max2, max2), e.clientY + getRandomInt(-max2, max2));
+		ctx.lineTo(e.clientX - buttonOffsetX + getRandomInt(-max2, max2), e.clientY - buttonOffsetY + getRandomInt(-max2, max2));
 		ctx.stroke();
 
-		lastPoint = { x: e.clientX, y: e.clientY };
+		lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+		if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleStrokes2", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 		ctx.strokeStyle = 'white';
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleStrokes2", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
+
+
 }
-function modeThickBrush(elArg){
-	var ctx = elArg.getContext('2d');
+function modeThickBrush(el){
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineWidth = 10;
@@ -906,32 +1309,62 @@ function modeThickBrush(elArg){
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "ThickBrush", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  ctx.beginPath();
 	  ctx.moveTo(lastPoint.x, lastPoint.y);
-	  ctx.lineTo(e.clientX, e.clientY);
+	  ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	  ctx.stroke();
 	  
 	  ctx.moveTo(lastPoint.x - 5, lastPoint.y - 5);
 	  ctx.lineTo(e.clientX - 5, e.clientY - 5);
 	  ctx.stroke();
 	  
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "ThickBrush", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "ThickBrush", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeThickBrush2(elArg){
-	var ctx = elArg.getContext('2d');
+function modeThickBrush2(el){
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineWidth = 10;
@@ -939,18 +1372,21 @@ function modeThickBrush2(elArg){
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "ThickBrush2", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  ctx.beginPath();
 	  // ctx.strokeStyle = 'gray';
 	  ctx.moveTo(lastPoint.x, lastPoint.y);
-	  ctx.lineTo(e.clientX, e.clientY);
+	  ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	  ctx.stroke();
 	  // ctx.beginPath();
 	  // ctx.strokeStyle = 'white';
@@ -960,110 +1396,197 @@ function modeThickBrush2(elArg){
 	  // ctx.lineTo(e.clientX - factor, e.clientY - factor);
 	  // ctx.stroke();
 	  
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "ThickBrush2", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "ThickBrush2", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSlicedStroke (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeSlicedStroke (el) {
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 3;
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SlicedStroke", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  ctx.beginPath();
 	  
 	  ctx.globalAlpha = 1;
 	  ctx.moveTo(lastPoint.x, lastPoint.y);
-	  ctx.lineTo(e.clientX, e.clientY);
+	  ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	  ctx.stroke();
 	  
 	  ctx.moveTo(lastPoint.x - 4, lastPoint.y - 4);
-	  ctx.lineTo(e.clientX - 4, e.clientY - 4);
+	  ctx.lineTo(e.clientX - buttonOffsetX - 4, e.clientY - buttonOffsetY - 4);
 	  ctx.stroke();
 	  
 	  ctx.moveTo(lastPoint.x - 2, lastPoint.y - 2);
-	  ctx.lineTo(e.clientX - 2, e.clientY - 2);
+	  ctx.lineTo(e.clientX - buttonOffsetX - 2, e.clientY - buttonOffsetY - 2);
 	  ctx.stroke();
 	  
 	  ctx.moveTo(lastPoint.x + 2, lastPoint.y + 2);
-	  ctx.lineTo(e.clientX + 2, e.clientY + 2);
+	  ctx.lineTo(e.clientX - buttonOffsetX + 2, e.clientY - buttonOffsetY + 2);
 	  ctx.stroke();
 	  
 	  ctx.moveTo(lastPoint.x + 4, lastPoint.y + 4);
-	  ctx.lineTo(e.clientX + 4, e.clientY + 4);
+	  ctx.lineTo(e.clientX - buttonOffsetX + 4, e.clientY - buttonOffsetY + 4);
 	  ctx.stroke();
 	    
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SlicedStroke", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SlicedStroke", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSlicedStrokesOpacity (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeSlicedStrokesOpacity (el) {
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 3;
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY};
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SlicedStrokesOpacity", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  ctx.beginPath();
 	  
 	  ctx.globalAlpha = 1;
 	  ctx.moveTo(lastPoint.x - 4, lastPoint.y - 4);
-	  ctx.lineTo(e.clientX - 4, e.clientY - 4);
+	  ctx.lineTo(e.clientX - buttonOffsetX - 4, e.clientY - buttonOffsetY - 4);
 	  ctx.stroke();
 	  
 	  ctx.globalAlpha = 0.6;
 	  ctx.moveTo(lastPoint.x - 2, lastPoint.y - 2);
-	  ctx.lineTo(e.clientX - 2, e.clientY - 2);
+	  ctx.lineTo(e.clientX - buttonOffsetX - 2, e.clientY - buttonOffsetY - 2);
 	  ctx.stroke();
 	  
 	  ctx.globalAlpha = 0.4;
 	  ctx.moveTo(lastPoint.x, lastPoint.y);
-	  ctx.lineTo(e.clientX, e.clientY);
+	  ctx.lineTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	  ctx.stroke();
 	  
 	  ctx.globalAlpha = 0.3;
 	  ctx.moveTo(lastPoint.x + 2, lastPoint.y + 2);
-	  ctx.lineTo(e.clientX + 2, e.clientY + 2);
+	  ctx.lineTo(e.clientX - buttonOffsetX + 2, e.clientY - buttonOffsetY + 2);
 	  ctx.stroke();
 	  
 	  ctx.globalAlpha = 0.2;
 	  ctx.moveTo(lastPoint.x + 4, lastPoint.y + 4);
-	  ctx.lineTo(e.clientX + 4, e.clientY + 4);
+	  ctx.lineTo(e.clientX - buttonOffsetX + 4, e.clientY - buttonOffsetY + 4);
 	  ctx.stroke();
 	    
 	  lastPoint = { x: e.clientX, y: e.clientY };
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SlicedStrokesOpacity", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "SlicedStrokesOpacity", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeMultipleLines (elArg) {
+function modeMultipleLines (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1071,22 +1594,25 @@ function modeMultipleLines (elArg) {
 	  };
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleLines", e: 'mouseDown', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	   
 	  stroke(offsetPoints(-4));
@@ -1094,6 +1620,9 @@ function modeMultipleLines (elArg) {
 	  stroke(points);
 	  stroke(offsetPoints(2));
 	  stroke(offsetPoints(4));
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleLines", e: 'mouseMove', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
 
 	function offsetPoints(val) {
@@ -1129,12 +1658,36 @@ function modeMultipleLines (elArg) {
 	  ctx.stroke();
 	}
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
+	  if (TogetherJS.running) {
+        	TogetherJS.send({type: "MultipleLines", e: 'mouseUp', clientX: e.clientX, clientY: e.clientY});
+      }
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeMultipleLinesOpacity (elArg) {
+function modeMultipleLinesOpacity (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1142,22 +1695,22 @@ function modeMultipleLinesOpacity (elArg) {
 	  };
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 1;
 	ctx.lineJoin = ctx.lineCap = 'round';
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  var current_stroke_style = ctx.strokeStyle;
 	  ctx.strokeStyle = chroma(current_stroke_style).alpha(1).css();
@@ -1205,32 +1758,53 @@ function modeMultipleLinesOpacity (elArg) {
 	  ctx.stroke();
 	}
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeStampBasic (elArg) {
+function modeStampBasic (el) {
 	function getRandomInt(min, max) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	// var el = document.getElementById('c');
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineJoin = ctx.lineCap = 'round';
 	ctx.fillStyle = 'red';
 
 	var isDrawing, points = [ ], radius = 15;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	  
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  for (var i = 0; i < points.length; i++) {
@@ -1240,12 +1814,32 @@ function modeStampBasic (elArg) {
 	    ctx.stroke();
 	  }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeTrailEffect (elArg) {
+function modeTrailEffect (el) {
 	function distanceBetween(point1, point2) {
 	  return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
 	}
@@ -1253,21 +1847,21 @@ function modeTrailEffect (elArg) {
 	  return Math.atan2( point2.x - point1.x, point2.y - point1.y );
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 	ctx.fillStyle = 'red';
 	ctx.strokeStyle = '#333';
 
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  var currentPoint = { x: e.clientX, y: e.clientY };
+	  var currentPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
 	  var dist = distanceBetween(lastPoint, currentPoint);
 	  var angle = angleBetween(lastPoint, currentPoint);
 	  
@@ -1284,37 +1878,57 @@ function modeTrailEffect (elArg) {
 	  lastPoint = currentPoint;
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeRandomRadiusOpacity (elArg) {
+function modeRandomRadiusOpacity (el) {
 	function getRandomInt(min, max) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineJoin = ctx.lineCap = 'round';
 	ctx.fillStyle = 'red';
 
 	var isDrawing, points = [ ], radius = 15;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  points.push({ 
-	    x: e.clientX, 
-	    y: e.clientY,
+	    x: e.clientX - buttonOffsetX, 
+	    y: e.clientY - buttonOffsetY,
 	    radius: getRandomInt(10, 30),
 	    opacity: Math.random()
 	  });
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
 	  points.push({ 
-	    x: e.clientX, 
-	    y: e.clientY,
+	    x: e.clientX - buttonOffsetX, 
+	    y: e.clientY - buttonOffsetY,
 	    radius: getRandomInt(5, 20),
 	    opacity: Math.random()
 	  });
@@ -1329,12 +1943,32 @@ function modeRandomRadiusOpacity (elArg) {
 	    ctx.fill();
 	  }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeShapes (elArg) {
+function modeShapes (el) {
 	// http://carisenda.com/blog/2012/howto-draw-a-star-with-canvas.html
 	function drawStar(x, y) {
 	  var length = 15;
@@ -1370,12 +2004,12 @@ function modeShapes (elArg) {
 
 	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
 	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	  
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  for (var i = 0; i < points.length; i++) {
@@ -1386,8 +2020,28 @@ function modeShapes (elArg) {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeShapesRotation (elArg) {
+function modeShapesRotation (el) {
 	// http://carisenda.com/blog/2012/howto-draw-a-star-with-canvas.html
 	function drawStar(x, y, angle) {
 	  var length = 15;
@@ -1413,33 +2067,53 @@ function modeShapesRotation (elArg) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineJoin = ctx.lineCap = 'round';
 	ctx.strokeStyle = 'purple';
 
 	var isDrawing, points = [ ], radius = 15;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY, angle: getRandomInt(0, 180) });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY, angle: getRandomInt(0, 180) });
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY, angle: getRandomInt(0, 180) });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY, angle: getRandomInt(0, 180) });
 	  
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  for (var i = 0; i < points.length; i++) {
 	    drawStar(points[i].x, points[i].y, points[i].angle);
 	  }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeRandomizeEverything (elArg) {
+function modeRandomizeEverything (el) {
 	// http://carisenda.com/blog/2012/howto-draw-a-star-with-canvas.html
 	function drawStar(options) {
 	  var length = 15;
@@ -1469,14 +2143,14 @@ function modeRandomizeEverything (elArg) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	var isDrawing, points = [ ], radius = 15;
 
 	function addRandomPoint(e) {
 	  points.push({ 
-	    x: e.clientX, 
-	    y: e.clientY, 
+	    x: e.clientX - buttonOffsetX, 
+	    y: e.clientY - buttonOffsetY, 
 	    angle: getRandomInt(0, 180),
 	    width: getRandomInt(1,10),
 	    opacity: Math.random(),
@@ -1485,11 +2159,11 @@ function modeRandomizeEverything (elArg) {
 	  });
 	}
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  addRandomPoint(e);
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
 	  addRandomPoint(e);
@@ -1499,12 +2173,32 @@ function modeRandomizeEverything (elArg) {
 	    drawStar(points[i]);
 	  }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeColoredPixels (elArg) {
+function modeColoredPixels (el) {
 	function drawPixels(x, y) {
 	  for (var i = -10; i < 10; i+= 4) {
 	    for (var j = -10; j < 10; j+= 4) {
@@ -1521,27 +2215,27 @@ function modeColoredPixels (elArg) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineJoin = ctx.lineCap = 'round';
 	var isDrawing, lastPoint;
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  lastPoint = { x: e.clientX, y: e.clientY };
+	  lastPoint = { x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY };
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  drawPixels(e.clientX, e.clientY);
+	  drawPixels(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	  
 	  lastPoint = { x: e.clientX, y: e.clientY };
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	};
 }
-function modePatternBased (elArg) {
+function modePatternBased (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1564,7 +2258,7 @@ function modePatternBased (elArg) {
 	  return ctx.createPattern(patternCanvas, 'repeat');
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 25;
 	ctx.lineJoin = ctx.lineCap = 'round';
@@ -1572,15 +2266,15 @@ function modePatternBased (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
@@ -1600,12 +2294,32 @@ function modePatternBased (elArg) {
 	  ctx.stroke();
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeLinesPattern (elArg) {
+function modeLinesPattern (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1629,7 +2343,7 @@ function modeLinesPattern (elArg) {
 	  return ctx.createPattern(patternCanvas, 'repeat');
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 25;
 	ctx.lineJoin = ctx.lineCap = 'round';
@@ -1637,15 +2351,15 @@ function modeLinesPattern (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
@@ -1665,12 +2379,32 @@ function modeLinesPattern (elArg) {
 	  ctx.stroke();
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeLinesPatternsDoubleColor (elArg) {
+function modeLinesPatternsDoubleColor (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1691,7 +2425,7 @@ function modeLinesPatternsDoubleColor (elArg) {
 	  return ctx.createPattern(patternCanvas, 'repeat');
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 25;
 	ctx.lineJoin = ctx.lineCap = 'round';
@@ -1699,15 +2433,15 @@ function modeLinesPatternsDoubleColor (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
@@ -1727,12 +2461,32 @@ function modeLinesPatternsDoubleColor (elArg) {
 	  ctx.stroke();
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeLinesPatternRaindow (elArg) {
+function modeLinesPatternRaindow (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1763,7 +2517,7 @@ function modeLinesPatternRaindow (elArg) {
 	  return ctx.createPattern(patternCanvas, 'repeat');
 	}
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 25;
 	ctx.lineJoin = ctx.lineCap = 'round';
@@ -1771,15 +2525,15 @@ function modeLinesPatternRaindow (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX -  buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
@@ -1799,12 +2553,32 @@ function modeLinesPatternRaindow (elArg) {
 	  ctx.stroke();
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeLinesPatternImage (elArg) {
+function modeLinesPatternImage (el) {
 	function midPointBtw(p1, p2) {
 	  return {
 	    x: p1.x + (p2.x - p1.x) / 2,
@@ -1817,7 +2591,7 @@ function modeLinesPatternImage (elArg) {
 	}
 
 
-	var ctx = elArg.getContext('2d');
+	var ctx = el.getContext('2d');
 
 	ctx.lineWidth = 25;
 	ctx.lineJoin = ctx.lineCap = 'round';
@@ -1831,15 +2605,15 @@ function modeLinesPatternImage (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 	  
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
 
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	  
@@ -1859,13 +2633,33 @@ function modeLinesPatternImage (elArg) {
 	  ctx.stroke();
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSpray (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeSpray (el) {
+	var ctx = el.getContext('2d');
 	var isDrawing;
 	var density = 50;
 	ctx.fillStyle = global_styles.stroke_style;
@@ -1874,28 +2668,48 @@ function modeSpray (elArg) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
 	  ctx.lineWidth = 10;
 	  ctx.lineJoin = ctx.lineCap = 'round';
-	  ctx.moveTo(e.clientX, e.clientY);
+	  ctx.moveTo(e.clientX - buttonOffsetX, e.clientY - buttonOffsetY);
 	};
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (isDrawing) {
 	    for (var i = density; i--; ) {
 	      var radius = 20;
 	      var offsetX = getRandomInt(-radius, radius);
 	      var offsetY = getRandomInt(-radius, radius);
-	      ctx.fillRect(e.clientX + offsetX, e.clientY + offsetY, 1, 1);
+	      ctx.fillRect(e.clientX - buttonOffsetX + offsetX, e.clientY - buttonOffsetY + offsetY, 1, 1);
 	    }
 	  }
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSprayTimeBased (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeSprayTimeBased (el) {
+	var ctx = el.getContext('2d');
 	var clientX, clientY, timeout;
 	var density = 50;
 	ctx.fillStyle = global_styles.stroke_style;
@@ -1904,10 +2718,10 @@ function modeSprayTimeBased (elArg) {
 	  return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  ctx.lineJoin = ctx.lineCap = 'round';
-	  clientX = e.clientX;
-	  clientY = e.clientY;
+	  clientX = e.clientX -buttonOffsetX;
+	  clientY = e.clientY - buttonOffsetY;
 	  
 	  timeout = setTimeout(function draw() {
 	    for (var i = density; i--; ) {
@@ -1920,16 +2734,36 @@ function modeSprayTimeBased (elArg) {
 	    timeout = setTimeout(draw, 50);
 	  }, 50);
 	};
-	elArg.onmousemove = function(e) {
-	  clientX = e.clientX;
-	  clientY = e.clientY;
+	el.onmousemove = function(e) {
+	  clientX = e.clientX -  buttonOffsetX;
+	  clientY = e.clientY - buttonOffsetY;
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  clearTimeout(timeout);
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSprayRoundDistribution (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeSprayRoundDistribution (el) {
+	var ctx = el.getContext('2d');
 	var clientX, clientY, timeout;
 	var density = 50;
 	ctx.fillStyle = global_styles.stroke_style;
@@ -1938,10 +2772,10 @@ function modeSprayRoundDistribution (elArg) {
 	  return Math.random() * (max - min) + min;
 	}
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  ctx.lineJoin = ctx.lineCap = 'round';
-	  clientX = e.clientX;
-	  clientY = e.clientY;
+	  clientX = e.clientX - buttonOffsetX;
+	  clientY = e.clientY - buttonOffsetY;
 	  
 	  timeout = setTimeout(function draw() {
 	    for (var i = density; i--; ) {
@@ -1956,16 +2790,36 @@ function modeSprayRoundDistribution (elArg) {
 	    timeout = setTimeout(draw, 50);
 	  }, 50);
 	};
-	elArg.onmousemove = function(e) {
-	  clientX = e.clientX;
-	  clientY = e.clientY;
+	el.onmousemove = function(e) {
+	  clientX = e.clientX - buttonOffsetX;
+	  clientY = e.clientY - buttonOffsetY;
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  clearTimeout(timeout);
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeSprayRandomSize (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeSprayRandomSize (el) {
+	var ctx = el.getContext('2d');
 	var clientX, clientY, timeout;
 	var density = 40;
 	ctx.strokeStyle = global_styles.stroke_style;
@@ -1974,10 +2828,10 @@ function modeSprayRandomSize (elArg) {
 	  return Math.random() * (max - min) + min;
 	}
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  ctx.lineJoin = ctx.lineCap = 'round';
-	  clientX = e.clientX;
-	  clientY = e.clientY;
+	  clientX = e.clientX - buttonOffsetX;
+	  clientY = e.clientY - buttonOffsetY;
 	  
 	  timeout = setTimeout(function draw() {
 	    for (var i = density; i--; ) {
@@ -1993,16 +2847,36 @@ function modeSprayRandomSize (elArg) {
 	    timeout = setTimeout(draw, 50);
 	  }, 50);
 	};
-	elArg.onmousemove = function(e) {
-	  clientX = e.clientX;
-	  clientY = e.clientY;
+	el.onmousemove = function(e) {
+	  clientX = e.clientX - buttonOffsetX;
+	  clientY = e.clientY - buttonOffsetY;
 	};
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  clearTimeout(timeout);
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeNeighbor (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeNeighbor (el) {
+	var ctx = el.getContext('2d');
 	ctx.strokeStyle = global_styles.stroke_style;
 
 	ctx.lineWidth = 1;
@@ -2010,16 +2884,16 @@ function modeNeighbor (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.beginPath();
 	  ctx.moveTo(points[0].x, points[0].y);
@@ -2034,13 +2908,33 @@ function modeNeighbor (elArg) {
 	  ctx.stroke();
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeNeighborNearby (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeNeighborNearby (el) {
+	var ctx = el.getContext('2d');
 	ctx.strokeStyle = global_styles.stroke_style;
 
 	ctx.lineWidth = 1;
@@ -2048,17 +2942,17 @@ function modeNeighborNearby (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  points = [ ];
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.beginPath();
 	  ctx.moveTo(points[points.length - 2].x, points[points.length - 2].y);
@@ -2080,13 +2974,33 @@ function modeNeighborNearby (elArg) {
 	  }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
-function modeNeighborFur (elArg) {
-	var ctx = elArg.getContext('2d');
+function modeNeighborFur (el) {
+	var ctx = el.getContext('2d');
 	ctx.strokeStyle = global_styles.stroke_style;
 
 	ctx.lineWidth = 1;
@@ -2094,17 +3008,17 @@ function modeNeighborFur (elArg) {
 
 	var isDrawing, points = [ ];
 
-	elArg.onmousedown = function(e) {
+	el.onmousedown = function(e) {
 	  points = [ ];
 	  isDrawing = true;
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY});
 	};
 
-	elArg.onmousemove = function(e) {
+	el.onmousemove = function(e) {
 	  if (!isDrawing) return;
 
 	  //ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	  points.push({ x: e.clientX, y: e.clientY });
+	  points.push({ x: e.clientX - buttonOffsetX, y: e.clientY - buttonOffsetY });
 
 	  ctx.beginPath();
 	  ctx.moveTo(points[points.length - 2].x, points[points.length - 2].y);
@@ -2126,8 +3040,28 @@ function modeNeighborFur (elArg) {
 	  }
 	};
 
-	elArg.onmouseup = function() {
+	el.onmouseup = function() {
 	  isDrawing = false;
 	  points.length = 0;
 	};
+////////  Adds touch events ///////////
+	var touchDown = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousedown(newE);
+	};
+	var touchXY = function(e) {
+	  e.preventDefault();
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmousemove(newE);
+	};
+	var touchUp = function(e) {
+	  var newE = {clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY};
+	  el.onmouseup(newE);
+	};
+
+	el.addEventListener("touchstart", touchDown, false);
+    el.addEventListener("touchmove", touchXY, true);
+    el.addEventListener("touchend", touchUp, false);
+//////////////////////////////////////////////////////
 }
