@@ -71,14 +71,14 @@ video#bgvid {
     background-size: cover; 
 }
 
-@media (max-width: 1136px) {
+@media (max-width: 1024px) {
 .ec {
     background-image:url(Tropicult_Takeover_web_02.gif);
     background-size:cover;
     background-repeat:no-repeat;
     overflow:hidden;
 }
-.ec vid  {
+.ec video  {
     display: none;
   }
 }
